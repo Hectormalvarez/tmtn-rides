@@ -22,5 +22,5 @@ class AuthenticationTest(APITestCase):
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         self.assertEqual(response.data["id"], user.id)
         self.assertEqual(response.data["username"], user.username)
-        self.assertEqual(response.data["first_name"], user.username)
+        self.assertEqual(response.data["first_name"], user.first_name)
         self.assertEqual(response.data["last_name"], user.last_name)
