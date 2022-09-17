@@ -26,8 +26,20 @@ SECRET_KEY = 'django-insecure-rr$ee(u0_hk_@%=^#v8f%i-dyxq(omsd%%vtv%mtfa5h^j3n-n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+ASGI_APPLICATION = 'rides.routing.application'
+
 ALLOWED_HOSTS = []
 
+REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [REDIS_URL],
+        },
+    },
+}
 
 # Application definition
 
@@ -39,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.postgres',
     'django.contrib.staticfiles',
+    'channels',
     'rest_framework',
     'trips',
 ]
