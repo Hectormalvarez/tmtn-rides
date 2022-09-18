@@ -1,5 +1,3 @@
-from email import message
-from re import A
 import pytest
 from channels.testing import WebsocketCommunicator
 from channels.layers import get_channel_layer
@@ -9,6 +7,7 @@ from django.contrib.auth.models import Group
 from rest_framework_simplejwt.tokens import AccessToken
 
 from rides.routing import application
+from trips.models import Trip
 
 TEST_CHANNEL_LAYERS = {
     "default": {
@@ -31,6 +30,21 @@ def create_user(username, password, group="rider"):
 
     return user, access
 
+@database_sync_to_async
+def create_trip(
+    pick_up_address="123 main street",
+    drop_off_address="456 piney road",
+    status="REQUESTED",
+    rider=None,
+    driver=None
+):
+    return Trip.objects.create(
+        pick_up_address=pick_up_address,
+        drop_off_address=drop_off_address,
+        status=status,
+        rider=rider,
+        driver=driver
+    )
 
 @pytest.mark.asyncio
 @pytest.mark.django_db(transaction=True)
@@ -174,6 +188,32 @@ class TestWebSocket:
         }        
         channel_layer = get_channel_layer()
         await channel_layer.group_send(response_data["id"], message=message)
+        
+        # rider receives message
+        response = await communicator.receive_json_from()
+        assert response == message
+        
+        await communicator.disconnect()
+
+    async def test_join_trip_group_on_connect(self, settings):
+        settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
+        user, access = await create_user(
+            'test.user@example.com', 'pAssw0rd', 'rider'
+        )
+        trip = await create_trip(rider=user)
+        communicator = WebsocketCommunicator(
+            application=application,
+            path=f'/rides/?token={access}'
+        )
+        connected, _ = await communicator.connect()
+        
+        # send a message to the trip group
+        message = {
+            "type": "echo.message",
+            "data": "this is a test message",
+        }
+        channel_layer = get_channel_layer()
+        await channel_layer.group_send(f'{trip.id}', message=message)
         
         # rider receives message
         response = await communicator.receive_json_from()
