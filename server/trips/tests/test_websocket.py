@@ -16,9 +16,19 @@ TEST_CHANNEL_LAYERS = {
 
 
 @database_sync_to_async
-def create_user(username, password):
-    user = get_user_model().objects.create_user(username=username, password=password)
+def create_user(username, password, group="rider"):
+    # create user
+    user = get_user_model().objects.create_user(
+        username=username, password=password
+    )
+    # create user group
+    user_group, _ = Group.objects.get_or_create(name=group)
+    user.groups.add(user_group)
+    user.save()
+    
+    # create access token
     access = AccessToken.for_user(user)
+    
     return user, access
 
 
@@ -27,12 +37,9 @@ def create_user(username, password):
 class TestWebSocket:
     async def test_can_connect_to_server(self, settings):
         settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
-        _, access = await create_user(
-            'test.user@example.com', 'pAssw0rd'
-        )
+        _, access = await create_user("test.user@example.com", "pAssw0rd")
         communicator = WebsocketCommunicator(
-            application=application,
-            path=f'/rides/?token={access}'
+            application=application, path=f"/rides/?token={access}"
         )
         connected, _ = await communicator.connect()
         assert connected is True
@@ -40,12 +47,9 @@ class TestWebSocket:
 
     async def test_can_send_and_receive_messages(self, settings):
         settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
-        _, access = await create_user(
-            'test.user@example.com', 'pAssw0rd'
-        )
+        _, access = await create_user("test.user@example.com", "pAssw0rd")
         communicator = WebsocketCommunicator(
-            application=application,
-            path=f'/rides/?token={access}'
+            application=application, path=f"/rides/?token={access}"
         )
         await communicator.connect()
         message = {
@@ -59,12 +63,9 @@ class TestWebSocket:
 
     async def test_can_send_receive_broadcase_messages(self, settings):
         settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
-        _, access = await create_user(
-            'test.user@example.com', 'pAssw0rd'
-        )
+        _, access = await create_user("test.user@example.com", "pAssw0rd")
         communicator = WebsocketCommunicator(
-            application=application,
-            path=f'/rides/?token={access}'
+            application=application, path=f"/rides/?token={access}"
         )
         await communicator.connect()
         message = {
