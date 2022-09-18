@@ -1,3 +1,5 @@
+from email import message
+from re import A
 import pytest
 from channels.testing import WebsocketCommunicator
 from channels.layers import get_channel_layer
@@ -139,5 +141,42 @@ class TestWebSocket:
         assert response_data["id"] is not None
         assert response_data["rider"]["username"] == user.username
         assert response_data["driver"] is None
+        
+        await communicator.disconnect()
+
+    async def test_create_trip_group(self, settings):
+        settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
+        user, access = await create_user(
+            "test.user@example.com", "pAssw0rd", "rider"
+        )
+        communicator = WebsocketCommunicator(
+            application=application,
+            path=f'/rides/?token={access}'
+        )
+        await communicator.connect()
+        
+        # send a ride request
+        await communicator.send_json_to({
+            "type": "create.trip",
+            "data": {
+                "pick_up_address": "123 main street",
+                "drop_off_address": "456 piney road",
+                "rider": user.id,
+            },
+        })
+        response = await communicator.receive_json_from()
+        response_data = response.get("data")
+        
+        # Send a message to the trip group
+        message = {
+            "type": "echo.message",
+            "data": "This is a test message",
+        }        
+        channel_layer = get_channel_layer()
+        await channel_layer.group_send(response_data["id"], message=message)
+        
+        # rider receives message
+        response = await communicator.receive_json_from()
+        assert response == message
         
         await communicator.disconnect()
