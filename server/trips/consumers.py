@@ -1,4 +1,9 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from channels.db import database_sync_to_async
+
+@database_sync_to_async
+def _get_user_group(self, user):
+    return user.groups.first().name
 
 
 class TaxiConsumer(AsyncJsonWebsocketConsumer):
