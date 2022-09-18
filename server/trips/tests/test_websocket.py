@@ -1,9 +1,9 @@
 import pytest
 from channels.testing import WebsocketCommunicator
 from channels.layers import get_channel_layer
-
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from rest_framework_simplejwt.tokens import AccessToken
 
 from rides.routing import application
