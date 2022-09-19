@@ -267,7 +267,7 @@ class TestWebSocket:
         user, access = await create_user("test.user@example.com", "pAssw0rd", "driver")
         trip = await create_trip(driver=user)
         communicator = WebsocketCommunicator(
-            application=application, path=f"/taxi/?token={access}"
+            application=application, path=f"/rides/?token={access}"
         )
         await communicator.connect()
 
