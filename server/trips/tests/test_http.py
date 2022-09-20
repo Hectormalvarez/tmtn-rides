@@ -1,11 +1,15 @@
 import base64
+from io import BytesIO
 import json
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.core.files.uploadedfile import SimpleUploadedFile
+
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
+from PIL import Image
 
 from trips.serializers import TripSerializer, UserSerializer
 from trips.models import Trip
@@ -20,9 +24,16 @@ def create_user(username="user@example.com", password=PASSWORD, group_name="ride
     user.save()
     return user
 
+def create_photo_file():
+    data = BytesIO()
+    Image.new('RGB', (100, 100)).save(data, 'PNG')
+    data.seek(0)
+    return SimpleUploadedFile("photo.png", data.getvalue())
+
 
 class AuthenticationTest(APITestCase):
     def test_user_can_sign_up(self):
+        photo_file = create_photo_file()
         response = self.client.post(
             reverse("sign_up"),
             data={
@@ -32,6 +43,7 @@ class AuthenticationTest(APITestCase):
                 "password1": PASSWORD,
                 "password2": PASSWORD,
                 "group": "rider",
+                "photo": photo_file,
             },
         )
         user = get_user_model().objects.last()
@@ -40,6 +52,7 @@ class AuthenticationTest(APITestCase):
         self.assertEqual(response.data["username"], user.username)
         self.assertEqual(response.data["first_name"], user.first_name)
         self.assertEqual(response.data["last_name"], user.last_name)
+        self.assertIsNotNone(user.photo)
 
     def test_user_can_log_in(self):
         user = create_user()

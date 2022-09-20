@@ -17,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        group_data = validated_data.pop('group')
+        group_data = validated_data.pop("group")
         group, _ = Group.objects.get_or_create(name=group_data)
         data = {
             key: value
@@ -40,6 +40,7 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "group",
+            "photo",
         )
         read_only_fields = ("id",)
 
