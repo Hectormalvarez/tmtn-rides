@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import axios from "axios"
 import {
   Button, Container, Form, Navbar
 } from 'react-bootstrap';
@@ -13,10 +13,21 @@ import LogIn from "./components/LogIn";
 import "./App.css";
 
 function App() {
-  const [isLoggedIn, setLoggedIn] = useState(false);
-  const logIn = (username, password) => {
-    setLoggedIn(true)
-    console.log("LOGGIN")
+  const [isLoggedIn, setLoggedIn] = useState(() => {
+    return window.localStorage.getItem("rider.auth") !==null;
+  });
+  const logIn = async (username, password) => {
+    const url = "/api/log_in/"
+    try {
+      const response = await axios.post(url, {username, password})
+      window.localStorage.setItem(
+        "rider.auth", JSON.stringify(response.data)
+      );
+      setLoggedIn(true);
+    }
+    catch (error) {
+      console.error(error);
+    }
   }
 
   return (

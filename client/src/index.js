@@ -2,10 +2,14 @@ import "bootswatch/dist/lumen/bootstrap.css";
 
 import React from "react";
 import ReactDOM from "react-dom/client";
+import axios from "axios"
 import { HashRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+
+axios.defaults.xsrfCookieName = 'csrftoken'; // new
+axios.defaults.xsrfHeaderName = 'X-CSRFToken'; // new
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

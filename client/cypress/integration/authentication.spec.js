@@ -1,14 +1,25 @@
-/* eslint-disable no-undef */
 describe("Authentication", function () {
   it("Can log in.", function () {
+    cy.intercept("POST", "log_in", {
+      statusCode: 200,
+      body: {
+        "access": "ACCESS_TOKEN",
+        "refresh": "REFRESH_TOKEN"
+      }
+    }).as("logIn");
+
     cy.visit("/#/log-in");
     cy.get("input#username").type("gary.cole@example.com");
     cy.get("input#password").type("pAssw0rd", { log: false });
     cy.get("button").contains("Log in").click();
-    cy.hash().should("eq", "#/");
 
-    cy.get("button").contains("Log out")
+    // eslint-disable-next-line testing-library/await-async-utils
+    cy.wait("@logIn");
+
+    cy.hash().should("eq", "#/");
+    cy.get("button").contains("Log out");
   });
+  
   it("Can sign up.", function () {
     cy.visit("/#/sign-up");
     cy.get("input#username").type("gary.cole@example.com");
@@ -17,7 +28,7 @@ describe("Authentication", function () {
     cy.get("input#password").type("pAssw0rd", { log: false });
     cy.get("select#group").select("driver");
     cy.get("input#photo").attachFile("images/photo.jpg");
-    cy.get("button").contains("Sign up").click()
+    cy.get("button").contains("Sign up").click();
     cy.hash().should("eq", "#/log-in");
-  })
+  });
 });
