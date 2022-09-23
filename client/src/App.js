@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import axios from "axios"
-import {
-  Button, Container, Form, Navbar
-} from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
-import { Outlet, Route, Routes } from 'react-router-dom';
+import axios from "axios";
+import { Button, Container, Form, Navbar } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
+import { Outlet, Route, Routes } from "react-router-dom";
 
 import Landing from "./components/Landing";
 import SignUp from "./components/SignUp";
@@ -14,34 +12,34 @@ import "./App.css";
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(() => {
-    return window.localStorage.getItem("rider.auth") !==null;
+    return window.localStorage.getItem("rider.auth") !== null;
   });
   const logIn = async (username, password) => {
-    const url = "/api/log_in/"
+    const url = "/api/log_in/";
     try {
-      const response = await axios.post(url, {username, password})
-      window.localStorage.setItem(
-        "rider.auth", JSON.stringify(response.data)
-      );
+      const response = await axios.post(url, { username, password });
+      window.localStorage.setItem("rider.auth", JSON.stringify(response.data));
       setLoggedIn(true);
-    }
-    catch (error) {
+    } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   return (
-      <Routes>
-        <Route path="/" element={<Layout isLoggedIn={isLoggedIn} />}>
-          <Route index element={<Landing />} />
-          <Route path="sign-up" element={<SignUp />} />
-          <Route path="log-in" element={<LogIn logIn={logIn} />} />
-        </Route>
-      </Routes>
+    <Routes>
+      <Route path="/" element={<Layout isLoggedIn={isLoggedIn} />}>
+        <Route index element={<Landing />} />
+        <Route path="sign-up" element={<SignUp />} />
+        <Route
+          path="log-in"
+          element={<LogIn isLoggedIn={isLoggedIn} logIn={logIn} />}
+        />
+      </Route>
+    </Routes>
   );
 }
 
-function Layout({isLoggedIn}) {
+function Layout({ isLoggedIn }) {
   return (
     <>
       <Navbar bg="light" expand="lg" variant="light">
@@ -51,13 +49,11 @@ function Layout({isLoggedIn}) {
           </LinkContainer>
           <Navbar.Toggle />
           <Navbar.Collapse className="justify-content-end">
-            {
-              isLoggedIn && (
-                <Form>
-                  <Button type="button">Log out</Button>
-                </Form>
-              )
-            }
+            {isLoggedIn && (
+              <Form>
+                <Button type="button">Log out</Button>
+              </Form>
+            )}
           </Navbar.Collapse>
         </Container>
       </Navbar>
