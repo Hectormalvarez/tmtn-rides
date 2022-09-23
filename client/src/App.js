@@ -20,8 +20,10 @@ function App() {
       const response = await axios.post(url, { username, password });
       window.localStorage.setItem("rider.auth", JSON.stringify(response.data));
       setLoggedIn(true);
+      return {response, isError: false}
     } catch (error) {
       console.error(error);
+      return { response: error, isError: true}
     }
   };
 
