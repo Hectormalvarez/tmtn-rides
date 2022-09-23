@@ -7,7 +7,9 @@
     "cypress/no-force": "warn",
     "cypress/no-async-tests": "error",
     "cypress/no-pause": "error",
-    "testing-library/await-async-utils": "off" 
+    "testing-library/await-async-utils": "off" ,
+    "no-unused-expressions": "off" ,
+    "jest/valid-expect": "off"
   },
   "env": {
     "cypress/globals": true
