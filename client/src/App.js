@@ -14,22 +14,31 @@ function App() {
   const [isLoggedIn, setLoggedIn] = useState(() => {
     return window.localStorage.getItem("rider.auth") !== null;
   });
+
   const logIn = async (username, password) => {
     const url = "/api/log_in/";
     try {
       const response = await axios.post(url, { username, password });
       window.localStorage.setItem("rider.auth", JSON.stringify(response.data));
       setLoggedIn(true);
-      return {response, isError: false}
+      return { response, isError: false };
     } catch (error) {
       console.error(error);
-      return { response: error, isError: true}
+      return { response: error, isError: true };
     }
+  };
+
+  const logOut = () => {
+    window.localStorage.removeItem("rider.auth");
+    setLoggedIn(false);
   };
 
   return (
     <Routes>
-      <Route path="/" element={<Layout isLoggedIn={isLoggedIn} />}>
+      <Route
+        path="/"
+        element={<Layout isLoggedIn={isLoggedIn} logOut={logOut} />}
+      >
         <Route index element={<Landing isLoggedIn={isLoggedIn} />} />
         <Route path="sign-up" element={<SignUp />} />
         <Route
@@ -41,7 +50,7 @@ function App() {
   );
 }
 
-function Layout({ isLoggedIn }) {
+function Layout({ isLoggedIn, logOut }) {
   return (
     <>
       <Navbar bg="light" expand="lg" variant="light">
@@ -53,7 +62,9 @@ function Layout({ isLoggedIn }) {
           <Navbar.Collapse className="justify-content-end">
             {isLoggedIn && (
               <Form>
-                <Button type="button">Log out</Button>
+                <Button type="button" onClick={() => logOut()}>
+                  Log out
+                </Button>
               </Form>
             )}
           </Navbar.Collapse>
