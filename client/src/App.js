@@ -28,7 +28,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout isLoggedIn={isLoggedIn} />}>
-        <Route index element={<Landing />} />
+        <Route index element={<Landing isLoggedIn={isLoggedIn} />} />
         <Route path="sign-up" element={<SignUp />} />
         <Route
           path="log-in"
