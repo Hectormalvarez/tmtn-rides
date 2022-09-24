@@ -1,34 +1,23 @@
 const faker = require("faker");
 
-const randomEmail = faker.internet.email();
+const email = faker.internet.email();
+const firstName = faker.name.firstName();
+const lastName = faker.name.lastName();
 
 const logIn = () => {
-  const { password } = Cypress.env("credentials");
   // Capture HTTP requests.
   cy.intercept("POST", "log_in").as("logIn");
   // Log into the app.
   cy.visit("/#/log-in");
-  cy.get("input#username").type(randomEmail);
-  cy.get("input#password").type(password, { log: false });
+  cy.get("input#username").type(email);
+  cy.get("input#password").type("pAssw0rd", { log: false });
   cy.get("button").contains("Log in").click();
   cy.wait("@logIn");
 };
 
 describe("Authentication", function () {
   it("Can sign up.", function () {
-    cy.intercept("POST", "sign_up").as("signUp");
-
-    cy.visit("/#/sign-up");
-    cy.get("input#username").type(randomEmail);
-    cy.get("input#firstName").type("Test");
-    cy.get("input#lastName").type("User");
-    cy.get("input#password").type("pAssw0rd", { log: false });
-    cy.get("select#group").select("driver");
-
-    cy.get("input#photo").attachFile("images/photo.jpg");
-    cy.get("button").contains("Sign up").click();
-    cy.wait("@signUp");
-    cy.hash().should("eq", "#/log-in");
+    cy.addUser(email, firstName, lastName, "rider")
   });
 
   it("Cannot visit the login page when logged in", function () {
@@ -56,7 +45,7 @@ describe("Authentication", function () {
       },
     }).as("signUp");
     cy.visit("/#/sign-up");
-    cy.get("input#username").type(randomEmail);
+    cy.get("input#username").type(email);
     cy.get("input#firstName").type("Gary");
     cy.get("input#lastName").type("Cole");
     cy.get("input#password").type("pAssw0rd", { log: false });
@@ -65,6 +54,7 @@ describe("Authentication", function () {
     // handle file upload
     cy.get("input#photo").attachFile("images/photo.jpg");
     cy.get("button").contains("Sign up").click();
+
     cy.wait("@signUp");
     cy.get("div.invalid-feedback").contains(
       "A user with that username already exists"
@@ -85,7 +75,6 @@ describe("Authentication", function () {
   });
 
   it("Shows an alert on login error.", function () {
-    const { password } = Cypress.env("credentials");
     cy.intercept("POST", "log_in", {
       statusCode: 400,
       body: {
@@ -96,8 +85,8 @@ describe("Authentication", function () {
       },
     }).as("logIn");
     cy.visit("/#/log-in");
-    cy.get("input#username").type(randomEmail);
-    cy.get("input#password").type(password, { log: false });
+    cy.get("input#username").type(email);
+    cy.get("input#password").type("pAssw0rd", { log: false });
     cy.get("button").contains("Log in").click();
     cy.wait("@logIn");
     cy.get("div.alert").contains(
