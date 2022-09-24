@@ -1,7 +1,13 @@
 import React from "react";
 import { Breadcrumb, Card } from "react-bootstrap";
+import { Navigate } from "react-router-dom";
+import { isDriver } from "../services/AuthService";
 
 function Driver(props) {
+  if (!isDriver()) {
+    return <Navigate to="/" />;
+  }
+
   return (
     <>
       <Breadcrumb>
@@ -10,21 +16,15 @@ function Driver(props) {
       </Breadcrumb>
       <Card className="mb-3">
         <Card.Header>Current Trip</Card.Header>
-        <Card.Body>
-            No trips.
-        </Card.Body>
+        <Card.Body>No trips.</Card.Body>
       </Card>
       <Card className="mb-3">
         <Card.Header>Requested Trips</Card.Header>
-        <Card.Body>
-            No trips.
-        </Card.Body>
+        <Card.Body>No trips.</Card.Body>
       </Card>
       <Card className="mb-3">
         <Card.Header>Recent Trips</Card.Header>
-        <Card.Body>
-            No trips.
-        </Card.Body>
+        <Card.Body>No trips.</Card.Body>
       </Card>
     </>
   );
