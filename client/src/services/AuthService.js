@@ -1,3 +1,11 @@
+export const getAccessToken = () => {
+  const auth = JSON.parse(window.localStorage.getItem("rides.auth"));
+  if (auth) {
+    return auth.access;
+  }
+  return undefined
+}
+
 export const getUser = () => {
   const auth = JSON.parse(window.localStorage.getItem("rides.auth"));
   if (auth) {
