@@ -10,14 +10,14 @@ function TripCard({ title, trips, group, otherGroup }) {
   if (trips.length === 0) {
     cardBody = <>No trips.</>;
   } else {
-    mediaList = trips.map((trip) => {
+    mediaList = trips.map((trip) => (
       <TripMedia
         trip={trip}
         group={group}
         otherGroup={otherGroup}
         key={trip.id}
-      />;
-    });
+      />
+    ));
     cardBody = mediaList;
   }
   return (

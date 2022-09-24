@@ -12,7 +12,7 @@ function TripMedia({ trip, group, otherGroup }) {
       <div className="d-flex">
         <div className="flex-shrink-0">
           <img
-            alt={user}
+            alt={user.first_name}
             className="rounded-circle"
             src={photoUrl}
             width={80}
@@ -24,10 +24,10 @@ function TripMedia({ trip, group, otherGroup }) {
             {user.first_name} {user.last_name}
           </h5>
           <p>
-            <strong>{trip.pick_up_address}</strong>
+            <strong>{trip.pick_up_address}</strong> to{" "}
             <strong>{trip.drop_off_address}</strong>
             <br />
-            <span className="text-seconday">{trip.status}</span>
+            <span className="text-secondary">{trip.status}</span>
           </p>
         </div>
       </div>
