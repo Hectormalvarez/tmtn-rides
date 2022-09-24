@@ -4,7 +4,9 @@ import { Button, Container, Form, Navbar } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { Outlet, Route, Routes } from "react-router-dom";
 
+import Driver from "./components/Driver"
 import Landing from "./components/Landing";
+import Rider from "./components/Rider"
 import SignUp from "./components/SignUp";
 import LogIn from "./components/LogIn";
 
@@ -45,6 +47,8 @@ function App() {
           path="log-in"
           element={<LogIn isLoggedIn={isLoggedIn} logIn={logIn} />}
         />
+        <Route path="rider" element={<Rider />} />
+        <Route path="driver" element={<Driver />} />
       </Route>
     </Routes>
   );
