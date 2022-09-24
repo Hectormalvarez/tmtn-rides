@@ -1,11 +1,12 @@
 export const getUser = () => {
   const auth = JSON.parse(window.localStorage.getItem("rides.auth"));
   if (auth) {
-    const [, payload] = auth.access.split(".");
+    // eslint-disable-next-line no-unused-vars
+    const [_header, payload, _signature] = auth.access.split(".");
     const decoded = window.atob(payload);
     return JSON.parse(decoded);
   }
-  return undefined
+  return undefined;
 };
 
 export const isDriver = () => {
