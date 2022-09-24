@@ -1,13 +1,7 @@
 const logIn = () => {
   const { username, password } = Cypress.env("credentials");
   // Capture HTTP requests.
-  cy.intercept("POST", "log_in", {
-    statusCode: 200,
-    body: {
-      access: "ACCESS_TOKEN",
-      refresh: "REFRESH_TOKEN",
-    },
-  }).as("logIn");
+  cy.intercept("POST", "log_in").as("logIn");
   // Log into the app.
   cy.visit("/#/log-in");
   cy.get("input#username").type(username);
@@ -24,17 +18,7 @@ describe("Authentication", function () {
   });
 
   it("Can sign up.", function () {
-    cy.intercept("POST", "sign_up", {
-      statusCode: 201,
-      body: {
-        id: 1,
-        username: "gary.cole@example.com",
-        first_name: "Gary",
-        last_name: "Cole",
-        group: "driver",
-        photo: "/media/images/photo.jpg",
-      },
-    }).as("signUp");
+    cy.intercept("POST", "sign_up").as("signUp");
 
     cy.visit("/#/sign-up");
     cy.get("input#username").type("gary.cole@example.com");
