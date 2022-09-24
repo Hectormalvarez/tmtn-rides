@@ -1,6 +1,17 @@
 version: '3.8'
 
 services:
+  rides-client:
+    build:
+      context: ./client
+    command: yarn start
+    container_name: rides-client
+    depends_on:
+      - rides-server
+    ports:
+      - 3001:3000
+    stdin_open: true
+
   rides-server:
     build:
       context: ./server
