@@ -81,7 +81,7 @@ function LogIn({logIn, isLoggedIn}) {
             )}
           </Formik>
           <Card.Text className="text-center">
-            Don't have an account? ? <Link to="/sign-up">Sign up</Link>
+            Don't have an account? <Link to="/sign-up">Sign up</Link>
           </Card.Text>
         </Card.Body>
       </Card>
