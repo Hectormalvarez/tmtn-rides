@@ -3,7 +3,7 @@ import axios from "axios";
 import { getAccessToken } from "./AuthService";
 
 export const getTrip = async (id) => {
-  const url = `${process.env.REACT_APP_BASE_URL}/api/trip/${id}`;
+  const url = `${process.env.REACT_APP_BASE_URL}/api/trip/${id}/`;
   const token = getAccessToken();
   const headers = { Authorization: `Bearer ${token}` };
   try {
