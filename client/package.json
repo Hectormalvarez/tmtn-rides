@@ -45,6 +45,7 @@
   "devDependencies": {
     "cypress": "9.2.0",
     "cypress-file-upload": "5.0.8",
-    "eslint-plugin-cypress": "^2.12.1"
+    "eslint-plugin-cypress": "^2.12.1",
+    "faker": "5.5.3"
   }
 }
