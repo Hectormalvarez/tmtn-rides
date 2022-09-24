@@ -1,17 +1,6 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  rides-client:
-    build:
-      context: ./client
-    command: yarn start
-    container_name: rides-client
-    depends_on:
-      - rides-server
-    ports:
-      - 3001:3000
-    stdin_open: true
-
   rides-server:
     build:
       context: ./server
@@ -28,11 +17,13 @@ services:
       - RIDES_URL=redis://rides-redis:6379/0
     ports:
       - 8003:8000
-  
+    volumes:
+      - ./server:/usr/src/app
+
   rides-redis:
     container_name: rides-redis
     image: redis:6-alpine
-  
+
   rides-database:
     container_name: rides-database
     image: postgres:14-alpine
@@ -44,6 +35,20 @@ services:
     volumes:
       - rides-database:/var/lib/postgresql/data
 
+  rides-client:
+    build:
+      context: ./client
+    command: yarn start
+    container_name: rides-client
+    depends_on:
+      - rides-server
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - 3000:3000
+    stdin_open: true
+    volumes:
+      - ./client:/usr/src/app
+
 volumes:
   rides-database:
-    
