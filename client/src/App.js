@@ -14,14 +14,14 @@ import "./App.css";
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(() => {
-    return window.localStorage.getItem("rider.auth") !== null;
+    return window.localStorage.getItem("rides.auth") !== null;
   });
 
   const logIn = async (username, password) => {
     const url = `${process.env.REACT_APP_BASE_URL}/api/log_in/`;
     try {
       const response = await axios.post(url, { username, password });
-      window.localStorage.setItem("rider.auth", JSON.stringify(response.data));
+      window.localStorage.setItem("rides.auth", JSON.stringify(response.data));
       setLoggedIn(true);
       return { response, isError: false };
     } catch (error) {
