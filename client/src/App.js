@@ -4,11 +4,13 @@ import { Button, Container, Form, Navbar } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { Outlet, Route, Routes } from "react-router-dom";
 
-import Driver from "./components/Driver"
+import Driver from "./components/Driver";
 import Landing from "./components/Landing";
-import Rider from "./components/Rider"
+import Rider from "./components/Rider";
 import SignUp from "./components/SignUp";
 import LogIn from "./components/LogIn";
+import DriverDashboard from "./components/DriverDashboard";
+import DriverDetail from "./components/DriverDetail";
 
 import "./App.css";
 
@@ -48,7 +50,10 @@ function App() {
           element={<LogIn isLoggedIn={isLoggedIn} logIn={logIn} />}
         />
         <Route path="rider" element={<Rider />} />
-        <Route path="driver" element={<Driver />} />
+        <Route path="driver" element={<Driver />}>
+          <Route index element={<DriverDashboard />} />
+          <Route path=":id" element={<DriverDetail />} />
+        </Route>
       </Route>
     </Routes>
   );
