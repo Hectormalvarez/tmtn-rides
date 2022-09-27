@@ -14,7 +14,7 @@ services:
       - PGUSER=rides
       - PGPASSWORD=rides
       - PGHOST=rides-database
-      - RIDES_URL=redis://rides-redis:6379/0
+      - REDIS_URL=redis://rides-redis:6379/0
     ports:
       - 8003:8000
     volumes:
