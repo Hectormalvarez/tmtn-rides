@@ -13,6 +13,7 @@ import DriverDashboard from "./components/DriverDashboard";
 import DriverDetail from "./components/DriverDetail";
 import RiderDashboard from './components/RiderDashboard';
 import RiderDetail from './components/RiderDetail';
+import RiderRequest from "./components/RiderRequest";
 
 import "./App.css";
 
@@ -53,6 +54,7 @@ function App() {
         />
         <Route path="rider" element={<Rider />}>
           <Route index element={<RiderDashboard />} />
+          <Route path="request" element={<RiderRequest />} />
           <Route path=":id" element={<RiderDetail />} />
         </Route>
         <Route path="driver" element={<Driver />}>
