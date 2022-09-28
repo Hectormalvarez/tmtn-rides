@@ -1,5 +1,7 @@
 const faker = require("faker");
 
+const { webSocket } = require("rxjs/webSocket");
+
 const driverEmail = faker.internet.email();
 const driverFirstName = faker.name.firstName();
 const driverLastName = faker.name.lastName();
@@ -19,14 +21,14 @@ const tripResponse = [
       id: 113,
       first_name: driverFirstName,
       last_name: driverLastName,
-      photo: "http://localhost:8003/media/photos/photo.jpg",
+      photo: "http://localhost:8003/media/photos/photo.jpg"
     },
     rider: {
       id: 112,
       first_name: riderFirstName,
       last_name: riderLastName,
-      photo: "http://localhost:8003/media/photos/photo.jpg",
-    },
+      photo: "http://localhost:8003/media/photos/photo.jpg"
+    }
   },
   {
     id: "bb3042cd-88dd-472c-890f-c5f59481de01",
@@ -39,14 +41,14 @@ const tripResponse = [
       id: 113,
       first_name: driverFirstName,
       last_name: driverLastName,
-      photo: "http://localhost:8003/media/photos/photo.jpg",
+      photo: "http://localhost:8003/media/photos/photo.jpg"
     },
     rider: {
       id: 112,
       first_name: riderFirstName,
       last_name: riderLastName,
-      photo: "http://localhost:8003/media/photos/photo.jpg",
-    },
+      photo: "http://localhost:8003/media/photos/photo.jpg"
+    }
   },
   {
     id: "50e0034f-0696-4b26-9068-8a7d064db922",
@@ -59,15 +61,15 @@ const tripResponse = [
       id: 113,
       first_name: driverFirstName,
       last_name: driverLastName,
-      photo: "http://localhost:8003/media/photos/photo.jpg",
+      photo: "http://localhost:8003/media/photos/photo.jpg"
     },
     rider: {
       id: 112,
       first_name: riderFirstName,
       last_name: riderLastName,
-      photo: "http://localhost:8003/media/photos/photo.jpg",
-    },
-  },
+      photo: "http://localhost:8003/media/photos/photo.jpg"
+    }
+  }
 ];
 
 describe("The driver dashboard", function () {
@@ -94,7 +96,7 @@ describe("The driver dashboard", function () {
   it("Displays messages for no trips", function () {
     cy.intercept("trip", {
       statusCode: 200,
-      body: [],
+      body: []
     }).as("getTrips");
 
     cy.logIn(riderEmail);
@@ -108,7 +110,7 @@ describe("The driver dashboard", function () {
   it("Displays current, requested, and completed trips", function () {
     cy.intercept("trip", {
       statusCode: 200,
-      body: tripResponse,
+      body: tripResponse
     }).as("getTrips");
 
     cy.logIn(driverEmail);
@@ -128,7 +130,7 @@ describe("The driver dashboard", function () {
   it("Shows details about a trip", () => {
     cy.intercept("/api/trip/*", {
       statusCode: 200,
-      body: tripResponse[0],
+      body: tripResponse[0]
     }).as("getTrip");
 
     cy.logIn(driverEmail);
@@ -136,8 +138,45 @@ describe("The driver dashboard", function () {
     cy.visit(`/#/driver/${tripResponse[0].id}`);
     cy.wait("@getTrip");
 
-    cy.get("[data-cy=trip-card]")
-      .should("have.length", 1)
-      .and("contain.text", "STARTED");
+    cy.get("[data-cy=trip-card]").should("have.length", 1).and("contain.text", "STARTED");
+  });
+  it("Can receive a rider request", function () {
+    cy.intercept("trip", {
+      statusCode: 200,
+      body: []
+    }).as("getTrips");
+
+    cy.logIn(driverEmail);
+
+    cy.visit("/#/driver");
+    cy.wait("@getTrips");
+
+    // requested trips
+    cy.get("[data-cy=trip-card]").eq(1).contains("No trips.");
+
+    // make trip request as rider
+    cy.request({
+      method: "POST",
+      url: "http://localhost:8003/api/log_in/",
+      body: {
+        username: riderEmail,
+        password: "pAssw0rd"
+      }
+    }).then((response) => {
+      console.log(response);
+      const token = response.body.access;
+      const ws = webSocket(`ws://localhost:8003/rides/?token=${token}`);
+      ws.subscribe();
+      ws.next({
+        type: "create.trip",
+        data: {
+          pick_up_address: "123 main street",
+          drop_off_address: "456 elm street",
+          rider: 20
+        }
+      });
+    });
+
+    cy.get("[data-cy=trip-card]").eq(1).contains("REQUESTED");
   });
 });
