@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Breadcrumb } from "react-bootstrap";
+import { webSocket } from "rxjs/webSocket";
 
 import TripCard from "./TripCard";
-import { connect, getTrips, messages } from "../services/TripService";
+import { getTrips } from "../services/TripService";
+import { getAccessToken } from "../services/AuthService";
 
 function DriverDashboard(props) {
   const [trips, setTrips] = useState([]);
@@ -20,19 +22,18 @@ function DriverDashboard(props) {
   }, []);
 
   useEffect(() => {
-    connect();
-    const subscription = messages.subscribe((message) => {
-      setTrips((prevTrips) => [
-        ...prevTrips.filter((trip) => trip.id !== message.data.id),
+    const token = getAccessToken();
+    const ws = webSocket(`ws://localhost:8003/rides/?token=${token}`);
+    const subscription = ws.subscribe((message) => {
+      setTrips(prevTrips => [
+        ...prevTrips.filter(trip => trip.id !== message.data.id),
         message.data
       ]);
     });
     return () => {
-      if (subscription) {
-        subscription.unsubscribe();
-      }
-    };
-  }, [setTrips]);
+      subscription.unsubscribe();
+    }
+  }, []);
 
   const getCurrentTrips = () => {
     return trips.filter((trip) => {
