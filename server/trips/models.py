@@ -18,7 +18,7 @@ class User(AbstractUser):
 class Trip(models.Model):
     REQUESTED = "REQUESTED"
     STARTED = "STARTED"
-    IN_PROGRESS = "INPROGRESS"
+    IN_PROGRESS = "IN_PROGRESS"
     COMPLETED = "COMPLETED"
     STATUSES = (
         (REQUESTED, REQUESTED),
